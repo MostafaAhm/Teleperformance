@@ -5,6 +5,8 @@ using System.Linq;
 using System.Threading.Tasks;
 using API.Data;
 using API.Models;
+using API.Models.Dtos;
+using AutoMapper;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Hosting;
@@ -20,18 +22,33 @@ namespace API.Controllers
     {
          private readonly ApiDbContext _context;
         public static IWebHostEnvironment _webHostEnvironment;
-        public EmployeesController(ApiDbContext context,IWebHostEnvironment webHostEnvironment)
+        private readonly IMapper _mapper;
+        public EmployeesController(ApiDbContext context,IWebHostEnvironment webHostEnvironment,IMapper mapper)
         {   
+            _mapper = mapper;
             _context = context;
             _webHostEnvironment = webHostEnvironment;
         }
 
         [HttpGet]
         [Route("GetEmployees")]
-        public async Task<IActionResult> GetEmployees()
+        public async Task<ActionResult<EmployeeDto>> GetEmployees()
         {
             var employees = await _context.Employees.ToListAsync();
             return Ok(employees);
+            //return Ok(_mapper.Map<Employee,EmployeeDto>(employees));
+            // return employees.Select(employee => new EmployeeDto
+            // {
+            //     Id = employee.Id,
+            //     Name = employee.Name,
+            //     Email = employee.Email,
+            //     Password = employee.Password,
+            //     PhoneNumber = employee.PhoneNumber,
+            //     EmployeeType = employee.EmployeeType.Name,
+            //     Image = employee.Image,
+            //     Files = employee.Files
+
+            // }).ToList();
         }
 
         [HttpPost]
@@ -84,7 +101,7 @@ namespace API.Controllers
 
         [HttpGet("{id}")]
         [Route("GetEmployeeById")]
-        public async Task<IActionResult> GetEmployee(int id)
+        public async Task<ActionResult<EmployeeDto>> GetEmployee(int id)
         {
             var employee = await _context.Employees.FirstOrDefaultAsync(x => x.Id == id);
 
@@ -95,7 +112,7 @@ namespace API.Controllers
             if(employee == null)
                 return NotFound();
 
-            return Ok(employee);
+            return _mapper.Map<Employee,EmployeeDto>(employee);
         }
 
         [HttpPut("{id}")]

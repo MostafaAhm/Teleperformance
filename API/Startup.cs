@@ -5,6 +5,8 @@ using System.Text;
 using System.Threading.Tasks;
 using API.Configuration;
 using API.Data;
+using API.Models.Dtos;
+using AutoMapper;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -34,7 +36,7 @@ namespace Task
         public void ConfigureServices(IServiceCollection services)
         {
             services.Configure<JwtConfig>(Configuration.GetSection("JwtConfig"));
-
+            services.AddAutoMapper(typeof(Mapping));
             services.AddDbContext<ApiDbContext>(x =>
                 x.UseSqlite(Configuration.GetConnectionString("DefaultConnection")));
             services.AddControllers();
