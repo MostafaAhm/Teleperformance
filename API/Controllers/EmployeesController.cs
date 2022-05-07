@@ -32,23 +32,23 @@ namespace API.Controllers
 
         [HttpGet]
         [Route("GetEmployees")]
-        public async Task<ActionResult<EmployeeDto>> GetEmployees()
+        public async Task<ActionResult<List<EmployeeDto>>> GetEmployees()
         {
             var employees = await _context.Employees.ToListAsync();
-            return Ok(employees);
+            //return Ok(employees);
             //return Ok(_mapper.Map<Employee,EmployeeDto>(employees));
-            // return employees.Select(employee => new EmployeeDto
-            // {
-            //     Id = employee.Id,
-            //     Name = employee.Name,
-            //     Email = employee.Email,
-            //     Password = employee.Password,
-            //     PhoneNumber = employee.PhoneNumber,
-            //     EmployeeType = employee.EmployeeType.Name,
-            //     Image = employee.Image,
-            //     Files = employee.Files
+             return employees.Select(employee => new EmployeeDto
+             {
+                 Id = employee.Id,
+                 Name = employee.Name,
+                 Email = employee.Email,
+                 Password = employee.Password,
+                 PhoneNumber = employee.PhoneNumber,
+                 EmployeeType = employee.EmployeeType.Name,
+                 Image = employee.Image,
+                 Files = employee.Files
 
-            // }).ToList();
+             }).ToList();
         }
 
         [HttpPost]
